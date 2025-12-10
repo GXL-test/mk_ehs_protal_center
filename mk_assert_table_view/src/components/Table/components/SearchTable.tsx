@@ -97,8 +97,8 @@ const SearchTable: React.FC<SearchTableProps> = ({
       filters: [
         { text: '废弃', value: '00' },
         { text: '草稿', value: '10' },
-        { text: '结束', value: '20' },
-         { text: '待审', value: '30' },
+        { text: '结束', value: '30' },
+         { text: '待审', value: '20' },
         { text: '驳回', value: '11' },
           { text: '异常', value: '29' }
       ],
@@ -106,8 +106,8 @@ const SearchTable: React.FC<SearchTableProps> = ({
         const statusConfig = {
           "00": { color: 'green', text: '废弃' },
           "10": { color: 'red', text: '草稿' },
-          "20": { color: 'orange', text: '结束' },
-          "30": { color: 'green', text: '待审' },
+          "30": { color: 'orange', text: '结束' },
+          "20": { color: 'green', text: '待审' },
           "11": { color: 'red', text: '驳回' },
            "29": { color: 'red', text: '异常' }
         };
@@ -366,8 +366,8 @@ openNewWindow('/web/#/current/km-review/kmReviewMain/view/'+record.FD_ID+'?targe
                 <Select placeholder="选择状态" allowClear>
                   <Option value="00">废弃</Option>
                   <Option value="10">草稿</Option>
-                  <Option value="20">结束</Option>
-                   <Option value="30">待审</Option>
+                  <Option value="30">结束</Option>
+                   <Option value="20">待审</Option>
                     <Option value="11">驳回</Option>
                        <Option value="29">异常</Option>
                 </Select>
