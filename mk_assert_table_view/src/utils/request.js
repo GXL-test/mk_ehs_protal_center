@@ -4,7 +4,7 @@ import { message } from 'antd';
 // 创建axios实例
 const request = axios.create({
   baseURL: '/ekp_mkpass/back',
-  timeout: 10000,
+  timeout: 100000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -59,6 +59,7 @@ request.interceptors.response.use(
     });
 
     // 对响应错误做点什么
+    debugger
     if (error.response) {
       switch (error.response.status) {
         case 401:

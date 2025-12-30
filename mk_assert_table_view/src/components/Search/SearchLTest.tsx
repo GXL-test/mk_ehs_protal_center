@@ -61,8 +61,6 @@ const SearchLTest: React.FC = () => {
     // 处理搜索 - 添加明确的参数类型
     const handleSearch = (value: string) => {
         if (!value.trim()) return;
-        debugger;
-        
         setSearchValue(value);
         setHasSearched(true);
 

@@ -9,10 +9,7 @@ import { TableItem, SearchParams, PaginationParams, TableData ,ApiResponse} from
 // 模拟数据服务
 const mockDataService = {
   async fetchData(params: SearchParams & PaginationParams): Promise<TableData> {
-    // 模拟API调用延迟
-    // 模拟数据
-    
-    // const mockDatas: TableItem[] = Array.from({ length: 100 }, (_, i) => ({
+    // const mockData: TableItem[] = Array.from({ length: 100 }, (_, i) => ({
     //   FD_ID: `item-${i + 1}`,
     //   FD_SUBJECT: `测试项目gxl ${i + 1}`,
     //   FD_NUMBER: `CODE-${String(i + 1).padStart(4, '0')}`,
@@ -21,40 +18,52 @@ const mockDataService = {
     //   FD_LAST_MODIFIED_TIME: "333",
     //   description: `这是第 ${i + 1} 个测试项目的描述信息`
     // }));
-       const mockData: TableItem[] = []
-      const  response :ApiResponse= await request.post('/km-review/gettempId/page/date', params);
-      if (response.status === 0 && response.data) {
-        const {data ,msg,status} = response;
-        //setMockData(data || [])
+    const mockData: TableItem[] = []
+    try {
+        const  response :ApiResponse= await request.post('/km-review/gettempId/page/date', params);
+        if (response.status === 0 && response.data) {
+          const {data ,msg,status} = response;
+          //setMockData(data || [])
 
-         for (let index = 0; index < response.data.length; index++) {
-                mockData[index] = response.data[index]
-            }
-        console.log('模板数据数据加载成功:', response.data);
-      } else {
-        console.error('API返回状态异常:', response);
-      }
-      
-      console.log(params)
-      console.log("cehsi "+mockData)
+           for (let index = 0; index < response.data.length; index++) {
+                  mockData[index] = response.data[index]
+           }
+          console.log('模板数据数据加载成功:', response.data);
+        } else {
+          console.error('API返回状态异常:', response);
+        }
+        console.log(params)
+
+      }catch (error){
+      console.error('API请求失败:', error);
+      message.error('网络请求失败');
+      return {
+        list: [],
+        pagination: {
+          current: params.current || 1,
+          pageSize: params.pageSize || 10,
+          total: 0
+        }
+      };
+    }
     // 模拟搜索过滤
     let filteredData = mockData;
-    
-  
+
+
     if (params.title) {
-      filteredData = filteredData.filter(item => 
+      filteredData = filteredData.filter(item =>
         item.FD_SUBJECT.toLowerCase().includes(params.title!.toLowerCase())
       );
     }
-    
+
     if (params.code) {
-      filteredData = filteredData.filter(item => 
+      filteredData = filteredData.filter(item =>
         item.FD_NUMBER.includes(params.code!)
       );
     }
-    
+
     if (params.status) {
-      filteredData = filteredData.filter(item => 
+      filteredData = filteredData.filter(item =>
         item.FD_PROCESS_STATUS === params.status
       );
     }
@@ -106,10 +115,10 @@ const DataTablePage: React.FC = () => {
   useEffect(() => {
     loadChartData();
   }, [loadChartData]);
- 
+
     // 表单条件改变条件变化时的处理
   const handleFilterChange2 = useCallback((filterParams: any) => {
-   
+
   }, [loadChartData]);
 
   const [formVisible, setFormVisible] = useState(false);
@@ -124,7 +133,7 @@ const DataTablePage: React.FC = () => {
       const result = await mockDataService.fetchData(params);
       console.log('筛选条件变化:', params);
       loadChartData(params);
-      
+
       console.log("加载数据"+result)
       return result;
     } finally {
@@ -202,19 +211,19 @@ const DataTablePage: React.FC = () => {
           <div className="view-content">
             <div className="grid grid-cols-2 gap-4">
               <div><strong>编号:</strong> {viewingRecord.FD_NUMBER}</div>
-              <div><strong>状态:</strong> 
+              <div><strong>状态:</strong>
                 <span className={`status-${viewingRecord.FD_PROCESS_STATUS} ml-2`}>
-                  {viewingRecord.FD_PROCESS_STATUS === '00' ? '01' : 
+                  {viewingRecord.FD_PROCESS_STATUS === '00' ? '01' :
                    viewingRecord.FD_PROCESS_STATUS === '20' ? '20' : '20'}
                 </span>
               </div>
               <div className="col-span-2"><strong>标题:</strong> {viewingRecord.FD_SUBJECT}</div>
               <div className="col-span-2">
-                <strong>描述:</strong> 
+                <strong>描述:</strong>
                 <p className="mt-2 text-gray-600">{viewingRecord.description}</p>
               </div>
-              <div><strong>创建时间:</strong> {new Date(viewingRecord.FD_CREATE_TIME).toLocaleString()}</div>
-              <div><strong>更新时间:</strong> {new Date(viewingRecord.FD_LAST_MODIFIED_TIME).toLocaleString()}</div>
+              <div><strong>创建时间:</strong> {viewingRecord.FD_CREATE_TIME}</div>
+              <div><strong>更新时间:</strong> {viewingRecord.FD_LAST_MODIFIED_TIME}</div>
             </div>
           </div>
         )}

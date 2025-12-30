@@ -10,36 +10,39 @@ const mockDataService = {
   async fetchData(params: SearchParams & PaginationParams): Promise<TableData> {
     // 模拟API调用延迟
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+    // 定义有效的状态映射
+
     // 模拟数据
     const mockData: TableItem[] = Array.from({ length: 100 }, (_, i) => ({
-      id: `item-${i + 1}`,
-      title: `测试项目 ${i + 1}`,
-      code: `CODE-${String(i + 1).padStart(4, '0')}`,
-      status: i % 3 === 0 ? 'active' : i % 3 === 1 ? 'inactive' : 'pending',
-      createTime: new Date(Date.now() - i * 10000000).toISOString(),
-      updateTime: new Date(Date.now() - i * 5000000).toISOString(),
-      description: `这是第 ${i + 1} 个测试项目的描述信息`
+       FD_ID: `item-${i + 1}`,
+       FD_SUBJECT: `测试项目 ${i + 1}`,
+       FD_NUMBER: `CODE-${String(i + 1).padStart(4, '0')}`,
+       FD_PROCESS_STATUS: "10",
+       FD_CREATE_TIME: new Date(Date.now() - i * 10000000).toISOString(),
+       FD_LAST_MODIFIED_TIME: new Date(Date.now() - i * 5000000).toISOString(),
+       description: `这是第 ${i + 1} 个测试项目的描述信息`
     }));
 
     // 模拟搜索过滤
     let filteredData = mockData;
     
     if (params.title) {
-      filteredData = filteredData.filter(item => 
-        item.title.toLowerCase().includes(params.title!.toLowerCase())
+      filteredData = filteredData.filter(item =>
+        //item.FD_SUBJECT.toLowerCase().includes(params.title!.toLowerCase())
+      item.FD_SUBJECT?.toLowerCase().includes(params.title!.toLowerCase()) ?? false
       );
     }
     
     if (params.code) {
       filteredData = filteredData.filter(item => 
-        item.code.includes(params.code!)
+        //item.FD_NUMBER.includes(params.code!)
+      item.FD_NUMBER?.includes(params.code!.toLowerCase()) ?? false
       );
     }
     
     if (params.status) {
       filteredData = filteredData.filter(item => 
-        item.status === params.status
+        item.FD_PROCESS_STATUS === params.status
       );
     }
 
@@ -58,7 +61,7 @@ const mockDataService = {
     };
   },
 
-  async deleteItem(id: string): Promise<void> {
+  async deleteItem(id: string | undefined): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 300));
     console.log('删除项目:', id);
   }
@@ -102,7 +105,7 @@ const DataTablePage: React.FC = () => {
 
   // 处理删除
   const handleDelete = async (record: TableItem) => {
-    await mockDataService.deleteItem(record.id);
+    await mockDataService.deleteItem(record.FD_ID);
   };
 
   // 处理表单提交
@@ -151,20 +154,20 @@ const DataTablePage: React.FC = () => {
         {viewingRecord && (
           <div className="view-content">
             <div className="grid grid-cols-2 gap-4">
-              <div><strong>编号:</strong> {viewingRecord.code}</div>
+              <div><strong>编号:</strong> {viewingRecord.FD_NUMBER}</div>
               <div><strong>状态:</strong> 
-                <span className={`status-${viewingRecord.status} ml-2`}>
-                  {viewingRecord.status === 'active' ? '激活' : 
-                   viewingRecord.status === 'inactive' ? '未激活' : '待处理'}
+                <span className={`status-${viewingRecord.FD_PROCESS_STATUS} ml-2`}>
+                  {/*{viewingRecord.FD_PROCESS_STATUS === 'active' ? '激活' :*/}
+                  {/* viewingRecord.FD_PROCESS_STATUS === 'inactive' ? '未激活' : '待处理'}*/}
                 </span>
               </div>
-              <div className="col-span-2"><strong>标题:</strong> {viewingRecord.title}</div>
+              <div className="col-span-2"><strong>标题:</strong> {viewingRecord.FD_SUBJECT}</div>
               <div className="col-span-2">
                 <strong>描述:</strong> 
                 <p className="mt-2 text-gray-600">{viewingRecord.description}</p>
               </div>
-              <div><strong>创建时间:</strong> {new Date(viewingRecord.createTime).toLocaleString()}</div>
-              <div><strong>更新时间:</strong> {new Date(viewingRecord.updateTime).toLocaleString()}</div>
+              <div><strong>创建时间:</strong>{viewingRecord.FD_CREATE_TIME}</div>
+              <div><strong>更新时间:</strong> {viewingRecord.FD_LAST_MODIFIED_TIME}</div>
             </div>
           </div>
         )}

@@ -4,8 +4,8 @@ export interface TableItem {
   FD_SUBJECT: string;
   FD_NUMBER: string;
   FD_PROCESS_STATUS: '20' | '30' | '00' | "11" | "10";
-  FD_CREATE_TIME: string;
-  FD_LAST_MODIFIED_TIME: string;
+  FD_CREATE_TIME?: string;
+  FD_LAST_MODIFIED_TIME?: string;
   description?: string;
 }
 
@@ -13,7 +13,7 @@ export interface SearchParams {
   title?: string;
   code?: string;
   status?: string;
-  FD_TEMPLATE_ID?:String 
+  FD_TEMPLATE_ID?:string
 }
 
 export interface PaginationParams {

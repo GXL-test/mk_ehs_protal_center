@@ -27,7 +27,7 @@ import {
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import type { SorterResult } from 'antd/es/table/interface';
 import dayjs from 'dayjs';
-import { TableItem, SearchParams, PaginationParams } from '../types/table';
+import { TableItem, SearchParams, PaginationParams,TableData } from '../types/table';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -39,7 +39,7 @@ interface SearchTableProps {
   onEdit?: (record: TableItem) => void;
   onView?: (record: TableItem) => void;
   onDelete?: (record: TableItem) => Promise<void>;
-  loading?: boolean;
+  loading?: boolean
 }
 
 const SearchTable: React.FC<SearchTableProps> = ({
@@ -204,15 +204,17 @@ const SearchTable: React.FC<SearchTableProps> = ({
 
       // 方法1: 使用 URLSearchParams（现代浏览器支持）
     const useQuery = () => {
-      return new URLSearchParams(location.search);
+      return new URLSearchParams(window.location.search);
     };
+     // eslint-disable-next-line react-hooks/rules-of-hooks
     const query = useQuery();
     const fdTmpId = query.get('fdTmpId');
     fetchData({
        ...searchParams,
-       FD_TEMPLATE_ID:fdTmpId,
+       FD_TEMPLATE_ID:fdTmpId|| undefined,
        current: pagination.current,
-       pageSize: pagination.pageSize
+       pageSize: pagination.pageSize,
+      total: pagination.total ||0// ✅ 添加这行
      });
    }, []);
 
@@ -222,16 +224,18 @@ const SearchTable: React.FC<SearchTableProps> = ({
 
           // 方法1: 使用 URLSearchParams（现代浏览器支持）
     const useQuery = () => {
-      return new URLSearchParams(location.search);
+      return new URLSearchParams(window.location.search);
     };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const query = useQuery();
     const fdTmpId = query.get('fdTmpId');
     setPagination(prev => ({ ...prev, current: 1 }));
     fetchData({
       ...values,
-      FD_TEMPLATE_ID:fdTmpId,
+      FD_TEMPLATE_ID:fdTmpId || undefined,
       current: 1,
-      pageSize: pagination.pageSize
+      pageSize: pagination.pageSize,
+      total: pagination.total ||0
     });
   };
 
@@ -244,7 +248,8 @@ const SearchTable: React.FC<SearchTableProps> = ({
     fetchData({
       ...resetParams,
       current: 1,
-      pageSize: pagination.pageSize
+      pageSize: pagination.pageSize,
+      total: pagination.total ||0
     });
   };
 
@@ -278,7 +283,8 @@ const SearchTable: React.FC<SearchTableProps> = ({
       ...filters,
       ...sortParams,
       current: newPagination.current,
-      pageSize: newPagination.pageSize
+      pageSize: newPagination.pageSize,
+      total: pagination.total ||0
     });
   };
 
@@ -301,7 +307,7 @@ openNewWindow('/web/#/current/km-review/kmReviewMain/view/'+record.FD_ID+'?targe
   const handleDelete = (record: TableItem) => {
     Modal.confirm({
       title: '确认删除',
-      content: `确定要删除"${record.title}"吗？此操作不可恢复。`,
+      content: `确定要删除"${record.FD_SUBJECT}"吗？此操作不可恢复。`,
       okText: '确认',
       cancelText: '取消',
       okType: 'danger',
@@ -313,7 +319,8 @@ openNewWindow('/web/#/current/km-review/kmReviewMain/view/'+record.FD_ID+'?targe
           fetchData({
             ...searchParams,
             current: pagination.current,
-            pageSize: pagination.pageSize
+            pageSize: pagination.pageSize,
+            total: pagination.total ||0
           });
         } catch (error) {
           message.error('删除失败');

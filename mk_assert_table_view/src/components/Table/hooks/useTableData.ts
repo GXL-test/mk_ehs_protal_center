@@ -35,14 +35,16 @@ export const useTableData = ({ fetchData }: UseTableDataProps) => {
     loadData({
       ...values,
       current: 1,
-      pageSize: pagination.pageSize
+      pageSize: pagination.pageSize,
+      total: 0,
     });
   }, [loadData, pagination.pageSize]);
 
   const handleReset = useCallback(() => {
     loadData({
       current: 1,
-      pageSize: pagination.pageSize
+      pageSize: pagination.pageSize,
+      total: 0
     });
   }, [loadData, pagination.pageSize]);
 
